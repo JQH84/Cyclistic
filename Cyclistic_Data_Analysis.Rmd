@@ -1,0 +1,103 @@
+---
+title: "Cyclistic"
+author: "JQH"
+date: "10/4/2021"
+output: html_document
+---
+
+# Cyclistic Data Analysis Project (Track 1 of Google Data Analytics Certification)
+
+## ASK Step
+
+The client has provided a number of files split into quarters and contain the ride sharing data for 2021. this data will be loaded , explored and cleaned as needed to prepare for analysis.
+
+The main team involved for this project are :
+
+-   Lily Moreno -> director of marketing and will be responsible to form the intended new strategy based on the data insights
+
+-   Cyclistic marketing analytics team -> the collected insights from this analysis will be combined with other work from this team for the final analysis
+
+-   Cyclistic Exec team -> final approval on going ahead with the program will come from this team.
+
+The main business Task required from this part of the project is :
+
+> Understanding the main difference between the Casual and Member riders of the Cyclistic company. and based on the insights and Data , a new marketing strategy will be formed.
+
+## Prepare Step
+
+The data sets were downloaded from client and stored temporarily for analysis. all the datasets for 2021 were given in a csv file format and will be inspected for any issues by using R analysis tools and SQL later after cleaning.
+
+since the data is coming directly from cyclistic it is assumed to be reliable , original and current. further analysis may deem it not to be comprehensive and cohesive.
+
+Based on the available
+
+```{r Load Libraries, message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+library(tidyverse) # used for the data wrangling and data manipulation 
+library(janitor) # used for data cleaning 
+library(DataExplorer)
+library(lubridate)
+
+```
+
+```{r Prepare, message=FALSE, warning=FALSE}
+
+
+# Clean the files environment in the R workspace 
+
+rm(list=ls())
+
+# set the current work directory to be the 2021 directory 
+
+setwd("Working_Dir/CSV/2021")
+
+# create Dataframes from all the files in the directory 
+
+df1 <- read.csv("202101-divvy-tripdata.csv")
+df2 <- read.csv("202102-divvy-tripdata.csv")
+df3 <- read.csv("202103-divvy-tripdata.csv")
+df4 <- read.csv("202104-divvy-tripdata.csv")
+df5 <- read.csv("202105-divvy-tripdata.csv")
+df6 <- read.csv("202107-divvy-tripdata.csv")
+df7 <- read.csv("202107-divvy-tripdata.csv")
+df8 <- read.csv("202108-divvy-tripdata.csv")
+
+# Create one Varible Dataframe with all the df's combined with rbind function (this requires the data frame structure to be matching)
+
+bike_rides_2021 <- rbind(df1,df2,df3,df4,df5,df6,df7,df8)
+
+# View a Summary of the data to see the data structure and investigate any issues with the data
+
+summary(bike_rides_2021)
+
+# clean up the data by removing any empty rows, cols and create the date variable with lubridate  
+bike_rides_2021 <- janitor::remove_empty(bike_rides_2021 , which = c("rows","cols"))
+
+bike_rides_2021$started_at <- lubridate::ymd_hms(bike_rides_2021$started_at)
+bike_rides_2021$ended_at <- lubridate::ymd_hms(bike_rides_2021$ended_at)
+
+# add the duration column to the data to know all trip durations 
+
+bike_rides_2021$duration <- bike_rides_2021$ended_at - bike_rides_2021$started_at
+
+bike_rides_2021 <- remove_empty(bike_rides_2021)
+
+
+
+### build some visulization charts to understand the data 
+```
+
+```{r}
+# Start to visulize the data 
+
+library(ggplot2)
+
+bike_rides_2021 %>%  filter(duration < 100 & start_lat > 41.9)
+ggplot(data = bike_rides_2021)+
+  geom_line(mapping = aes(x= bike_rides_2021$member_casual, y = bike_rides_2021$duration , color = bike_rides_2021$rideable_type))
+
+bike_rides_2021 %>%  filter(duration > 600 & start_lat < 41.9)
+ggplot(data = bike_rides_2021)+
+  geom_line(mapping = aes(x= bike_rides_2021$member_casual, y = bike_rides_2021$duration , color = bike_rides_2021$rideable_type) )
+  
+
+```
