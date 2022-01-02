@@ -25,32 +25,35 @@ The main business Task required from this part of the project is :
 
 ## Prepare Step
 
-The data sets were downloaded from client and stored temporarily for analysis. all the datasets for 2021 were given in a csv file format and will be inspected for any issues by using R analysis tools and SQL later after cleaning.
+The data sets were downloaded from client and stored temporarily for analysis. all the data sets for 2021 were given in a csv file format and will be inspected for any issues by using R analysis tools and later after cleaning.
 
-since the data is coming directly from cyclistic it is assumed to be reliable , original and current. further analysis may deem it not to be comprehensive and cohesive.
+#### Data Ethics and Privacy
 
-Based on the available
+Since the data is coming directly from Motivate international and is assumed to be fit for the business case study purpose. The data is under a [licence](https://ride.divvybikes.com/data-license-agreement) agreement which prohibits storing or distributing this data in any way. Inferring or atempting to relate this data to any individuals or persons who have used the cyclistic service.
 
-```{r Load Libraries, message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+## Process Step
+
+The process step will be to combine all the datasets into one main set and start the cleaning and analysis process. since we are using an R markdown file all cleaning steps will be documented below in R code blocks.
+
+first we load our required libraries for data manipulation and processing
+
+```{r Loading Libraries and Data into the workspace , message=FALSE, warning=FALSE}
+# load libraries required for processing and analysis 
+
 library(tidyverse) # used for the data wrangling and data manipulation 
 library(janitor) # used for data cleaning 
 library(DataExplorer)
-library(lubridate)
+library(lubridate) # used to easily convert data types of date and time formats 
 
-```
-
-```{r Prepare, message=FALSE, warning=FALSE}
-
-
-# Clean the files environment in the R workspace 
+# Clean the files environment in the R work space ( best practice to always start fresh)
 
 rm(list=ls())
 
 # set the current work directory to be the 2021 directory 
 
-setwd("Working_Dir/CSV/2021")
+setwd("../Working_Dir/CSV/2021")
 
-# create Dataframes from all the files in the directory 
+# create Data frames from all the files in the directory 
 
 df1 <- read.csv("202101-divvy-tripdata.csv")
 df2 <- read.csv("202102-divvy-tripdata.csv")
@@ -60,8 +63,28 @@ df5 <- read.csv("202105-divvy-tripdata.csv")
 df6 <- read.csv("202107-divvy-tripdata.csv")
 df7 <- read.csv("202107-divvy-tripdata.csv")
 df8 <- read.csv("202108-divvy-tripdata.csv")
+```
 
-# Create one Varible Dataframe with all the df's combined with rbind function (this requires the data frame structure to be matching)
+```{r examining each file to explore the data}
+# examine each file to ensure consistent col names and investigate the data 
+
+str(df1)
+str(df2)
+str(df3)
+str(df4)
+str(df5)
+str(df6)
+str(df7)
+str(df8)
+
+
+
+```
+
+Looking at the Structure of each dataset we can see that they can be easily combined into one master file for easier cleanup and exploring
+
+```{r combine all the dataframes into one for cleanup prior to any analysis  }
+# Create one Variable Data frame with all the df's combined with rbind function (this requires the data frame structure to be matching)
 
 bike_rides_2021 <- rbind(df1,df2,df3,df4,df5,df6,df7,df8)
 
@@ -69,24 +92,31 @@ bike_rides_2021 <- rbind(df1,df2,df3,df4,df5,df6,df7,df8)
 
 summary(bike_rides_2021)
 
+```
+
+```{r Clean up the data and transform it for analysis }
+
 # clean up the data by removing any empty rows, cols and create the date variable with lubridate  
 bike_rides_2021 <- janitor::remove_empty(bike_rides_2021 , which = c("rows","cols"))
+bike_rides_2021 <- remove_empty(bike_rides_2021)
+# convert the columns to appropriate date types
 
 bike_rides_2021$started_at <- lubridate::ymd_hms(bike_rides_2021$started_at)
 bike_rides_2021$ended_at <- lubridate::ymd_hms(bike_rides_2021$ended_at)
 
-# add the duration column to the data to know all trip durations 
+# add the duration column to the data to know the duration of all trip
 
 bike_rides_2021$duration <- bike_rides_2021$ended_at - bike_rides_2021$started_at
+lubridate::hms(bike_rides_2021$duration
+               
+bike_rides_2021 <- bike_rides_2021 %>% 
+  unique()
 
-bike_rides_2021 <- remove_empty(bike_rides_2021)
-
-
-
-### build some visulization charts to understand the data 
 ```
 
-```{r}
+## Visualize and Share Step
+
+```{r Visualize and Share the insights }
 # Start to visulize the data 
 
 library(ggplot2)
@@ -101,3 +131,5 @@ ggplot(data = bike_rides_2021)+
   
 
 ```
+
+## ACT and Recommend Step
