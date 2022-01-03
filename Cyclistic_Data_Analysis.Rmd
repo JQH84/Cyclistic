@@ -3,6 +3,8 @@ title: "Cyclistic"
 author: "JQH"
 date: "10/4/2021"
 output: html_document
+editor_options: 
+  chunk_output_type: inline
 ---
 
 # Cyclistic Data Analysis Project (Track 1 of Google Data Analytics Certification)
@@ -10,6 +12,14 @@ output: html_document
 ## ASK Step
 
 The client has provided a number of files split into quarters and contain the ride sharing data for 2021. this data will be loaded , explored and cleaned as needed to prepare for analysis.
+
+#### Business Task
+
+The main business Task required from this part of the project is :
+
+> Understanding the main difference between the Casual and Member riders of the Cyclistic company. and based on the insights and Data , a new marketing strategy will be formed.
+
+#### Stakeholders
 
 The main team involved for this project are :
 
@@ -19,11 +29,9 @@ The main team involved for this project are :
 
 -   Cyclistic Exec team -> final approval on going ahead with the program will come from this team.
 
-The main business Task required from this part of the project is :
-
-> Understanding the main difference between the Casual and Member riders of the Cyclistic company. and based on the insights and Data , a new marketing strategy will be formed.
-
 ## Prepare Step
+
+#### Data Structure and location
 
 The data sets were downloaded from client and stored temporarily for analysis. all the data sets for 2021 were given in a csv file format and will be inspected for any issues by using R analysis tools and later after cleaning.
 
@@ -35,6 +43,8 @@ Since the data is coming directly from Motivate international and is assumed to 
 
 The process step will be to combine all the datasets into one main set and start the cleaning and analysis process. since we are using an R markdown file all cleaning steps will be documented below in R code blocks.
 
+#### Load and stage the data for cleaning
+
 first we load our required libraries for data manipulation and processing
 
 ```{r Loading Libraries and Data into the workspace , message=FALSE, warning=FALSE}
@@ -43,7 +53,8 @@ first we load our required libraries for data manipulation and processing
 library(tidyverse) # used for the data wrangling and data manipulation 
 library(janitor) # used for data cleaning 
 library(DataExplorer)
-library(lubridate) # used to easily convert data types of date and time formats 
+library(lubridate) # used to easily convert data types of date and time formats
+library(skimr)
 
 # Clean the files environment in the R work space ( best practice to always start fresh)
 
@@ -51,7 +62,7 @@ rm(list=ls())
 
 # set the current work directory to be the 2021 directory 
 
-setwd("../Working_Dir/CSV/2021")
+setwd("~/Google_DataAnalytics_Course/Capstone_Project/Track_1/CaseStudy_1/Cyclistic/Working_Dir/CSV/2021")
 
 # create Data frames from all the files in the directory 
 
@@ -64,6 +75,8 @@ df6 <- read.csv("202107-divvy-tripdata.csv")
 df7 <- read.csv("202107-divvy-tripdata.csv")
 df8 <- read.csv("202108-divvy-tripdata.csv")
 ```
+
+#### Examine the data to determine problems
 
 ```{r examining each file to explore the data}
 # examine each file to ensure consistent col names and investigate the data 
@@ -79,6 +92,21 @@ str(df8)
 
 
 
+
+```
+
+```{r Prepare for processing }
+
+# checking columns names to ensure the ability to combine without issues
+colnames(df1)
+colnames(df2)
+colnames(df3)
+colnames(df4)
+colnames(df5)
+colnames(df6)
+colnames(df7)
+colnames(df8)
+
 ```
 
 Looking at the Structure of each dataset we can see that they can be easily combined into one master file for easier cleanup and exploring
@@ -90,28 +118,46 @@ bike_rides_2021 <- rbind(df1,df2,df3,df4,df5,df6,df7,df8)
 
 # View a Summary of the data to see the data structure and investigate any issues with the data
 
-summary(bike_rides_2021)
+skim_without_charts(bike_rides_2021)
 
 ```
+
+As we can see from the data skim function , there is some cleaning needed :
+
+-   Some missing values in the end_lat and end_long data , start_station_name , end_station_name)
+
+-   data types need to be fixed ( dates : started_at , ended_at )
+
+#### Cleaning the Data
 
 ```{r Clean up the data and transform it for analysis }
 
 # clean up the data by removing any empty rows, cols and create the date variable with lubridate  
 bike_rides_2021 <- janitor::remove_empty(bike_rides_2021 , which = c("rows","cols"))
-bike_rides_2021 <- remove_empty(bike_rides_2021)
+bike_rides_2021 <- drop_na(bike_rides_2021)
+
 # convert the columns to appropriate date types
 
-bike_rides_2021$started_at <- lubridate::ymd_hms(bike_rides_2021$started_at)
-bike_rides_2021$ended_at <- lubridate::ymd_hms(bike_rides_2021$ended_at)
+bike_rides_2021$started_at <- lubridate::dmy_hm(bike_rides_2021$started_at)
+bike_rides_2021$ended_at <- lubridate::dmy_hm(bike_rides_2021$ended_at)
+
+# create a date and day of week columns for using in analysis phases later
+
+bike_rides_2021$date <- format(as.Date(bike_rides_2021$started_at))
+bike_rides_2021$day_of_week <- format(as.Date(bike_rides_2021$date), "%A")
 
 # add the duration column to the data to know the duration of all trip
+bike_rides_2021$duration <- difftime(bike_rides_2021$ended_at , bike_rides_2021$started_at)
 
-bike_rides_2021$duration <- bike_rides_2021$ended_at - bike_rides_2021$started_at
-lubridate::hms(bike_rides_2021$duration
-               
-bike_rides_2021 <- bike_rides_2021 %>% 
-  unique()
 
+
+```
+
+```{r Check after cleaning   }
+
+# View a Summary of the data after cleaning to check 
+
+skim_without_charts(bike_rides_2021)
 ```
 
 ## Visualize and Share Step
