@@ -7,9 +7,9 @@ editor_options:
   chunk_output_type: inline
 ---
 
-# Cyclistic Data Analysis Project (Track 1 of Google Data Analytics Certification)
+# [**Cyclistic Data Analysis Project (Track 1 of Google Data Analytics Certification)**]{.ul}
 
-## ASK Step
+# ASK Step
 
 The client has provided a number of files split into quarters and contain the ride sharing data for 2021. this data will be loaded , explored and cleaned as needed to prepare for analysis.
 
@@ -29,7 +29,7 @@ The main team involved for this project are :
 
 -   Cyclistic Exec team -> final approval on going ahead with the program will come from this team.
 
-## Prepare Step
+# Prepare Step
 
 #### Data Structure and location
 
@@ -39,7 +39,7 @@ The data sets were downloaded from client and stored temporarily for analysis. a
 
 Since the data is coming directly from Motivate international and is assumed to be fit for the business case study purpose. The data is under a [licence](https://ride.divvybikes.com/data-license-agreement) agreement which prohibits storing or distributing this data in any way. Inferring or atempting to relate this data to any individuals or persons who have used the cyclistic service.
 
-## Process Step
+# Process Step
 
 The process step will be to combine all the datasets into one main set and start the cleaning and analysis process. since we are using an R markdown file all cleaning steps will be documented below in R code blocks.
 
@@ -130,24 +130,24 @@ As we can see from the data skim function , there is some cleaning needed :
 
 #### Cleaning the Data
 
-```{r Clean up the data and transform it for analysis }
+```{r Clean up the data and transform it for analysis}
 
-# clean up the data by removing any empty rows, cols and create the date variable with lubridate  
-bike_rides_2021 <- janitor::remove_empty(bike_rides_2021 , which = c("rows","cols"))
+# Change data types of the array data 
+
+bike_rides_2021$started_at <- lubridate::as_datetime(bike_rides_2021$started_at)
+bike_rides_2021$ended_at <- lubridate::as_datetime(bike_rides_2021$ended_at)
+
+# Calculate ride length and add new column 
+
+bike_rides_2021$ride_length <- difftime(bike_rides_2021$ended_at,bike_rides_2021$started_at, units = c("auto"))
+
+# add the day of the week to the data 
+bike_rides_2021$day_of_week <- lubridate::wday(bike_rides_2021$started_at , label = TRUE)
+
+#clean the ride_length to remove negative values 
 bike_rides_2021 <- drop_na(bike_rides_2021)
 
-# convert the columns to appropriate date types
-
-bike_rides_2021$started_at <- lubridate::dmy_hm(bike_rides_2021$started_at)
-bike_rides_2021$ended_at <- lubridate::dmy_hm(bike_rides_2021$ended_at)
-
-# create a date and day of week columns for using in analysis phases later
-
-bike_rides_2021$date <- format(as.Date(bike_rides_2021$started_at))
-bike_rides_2021$day_of_week <- format(as.Date(bike_rides_2021$date), "%A")
-
-# add the duration column to the data to know the duration of all trip
-bike_rides_2021$duration <- difftime(bike_rides_2021$ended_at , bike_rides_2021$started_at)
+# remove all ride length with 
 
 
 
@@ -158,6 +158,27 @@ bike_rides_2021$duration <- difftime(bike_rides_2021$ended_at , bike_rides_2021$
 # View a Summary of the data after cleaning to check 
 
 skim_without_charts(bike_rides_2021)
+```
+
+# Analyze Step 
+
+In this step we will work to perform some calculations on grouped data as well as some basic trend and relationship insights
+
+```{r Format data types for calculations }
+
+# create ride length variable by converting original from factor to numeric 
+
+bike_rides_2021$ride_length_num <- as.numeric(bike_rides_2021$ride_length)
+
+avg_ride_length <- bike_rides_2021$ride_length_num %>% 
+  mean() 
+
+max_ride_length <- bike_rides_2021$ride_length_num %>% 
+  max() 
+
+min_ride_length <- bike_rides_2021$ride_length_num %>% 
+  min() 
+
 ```
 
 ## Visualize and Share Step
