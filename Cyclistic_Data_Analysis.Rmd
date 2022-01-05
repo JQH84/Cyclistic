@@ -145,11 +145,7 @@ bike_rides_2021$ride_length <- difftime(bike_rides_2021$ended_at,bike_rides_2021
 bike_rides_2021$day_of_week <- lubridate::wday(bike_rides_2021$started_at , label = TRUE)
 
 #clean the ride_length to remove negative values 
-bike_rides_2021 <- drop_na(bike_rides_2021)
-
-# remove all ride length with 
-
-
+bike_rides_2021 <- bike_rides_2021 %>%  filter(bike_rides_2021$ride_length > 0 )
 
 ```
 
@@ -181,22 +177,27 @@ min_ride_length <- bike_rides_2021$ride_length_num %>%
 
 ```
 
-## Visualize and Share Step
+```{r Derive more insights }
+
+# bike rides with less than 5 mins 
+bike_rides_less_then_5mins <- bike_rides_2021 %>%  filter(ride_length_num <300 )
+
+
+
+```
+
+## Visualize and gain more insight
 
 ```{r Visualize and Share the insights }
 # Start to visulize the data 
 
 library(ggplot2)
 
-bike_rides_2021 %>%  filter(duration < 100 & start_lat > 41.9)
+bike_rides_2021 %>%  filter(ride_length < 100 & start_lat > 41.9)
 ggplot(data = bike_rides_2021)+
-  geom_line(mapping = aes(x= bike_rides_2021$member_casual, y = bike_rides_2021$duration , color = bike_rides_2021$rideable_type))
-
-bike_rides_2021 %>%  filter(duration > 600 & start_lat < 41.9)
-ggplot(data = bike_rides_2021)+
-  geom_line(mapping = aes(x= bike_rides_2021$member_casual, y = bike_rides_2021$duration , color = bike_rides_2021$rideable_type) )
+  geom_bar(mapping = aes(x= bike_rides_2021$member_casual, color = bike_rides_2021$rideable_type))
   
 
 ```
 
-## ACT and Recommend Step
+# ACT and Recommendation Step
