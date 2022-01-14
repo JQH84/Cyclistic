@@ -1,55 +1,5 @@
----
-title: "Cyclistic"
-author: "JQH"
-date: "10/4/2021"
-output:
-  pdf_document: default
-  html_document: default
-editor_options:
-  chunk_output_type: inline
----
 
-# [**Cyclistic Data Analysis Project (Track 1 of Google Data Analytics Certification)**]{.ul}
 
-# ASK Step
-
-The client has provided a number of files split into quarters and contain the ride sharing data for 2021. this data will be loaded , explored and cleaned as needed to prepare for analysis.
-
-#### Business Task
-
-The main business Task required from this part of the project is :
-
-> Understanding the main difference between the Casual and Member riders of the Cyclistic company. and based on the insights and Data , a new marketing strategy will be formed.
-
-#### Stakeholders
-
-The main team involved for this project are :
-
--   Lily Moreno -> director of marketing and will be responsible to form the intended new strategy based on the data insights
-
--   Cyclistic marketing analytics team -> the collected insights from this analysis will be combined with other work from this team for the final analysis
-
--   Cyclistic Exec team -> final approval on going ahead with the program will come from this team.
-
-# Prepare Step
-
-#### Data Structure and location
-
-The data sets were downloaded from client and stored temporarily for analysis. all the data sets for 2021 were given in a csv file format and will be inspected for any issues by using R analysis tools and later after cleaning.
-
-#### Data Ethics and Privacy
-
-Since the data is coming directly from Motivate international and is assumed to be fit for the business case study purpose. The data is under a [licence](https://ride.divvybikes.com/data-license-agreement) agreement which prohibits storing or distributing this data in any way. Inferring or atempting to relate this data to any individuals or persons who have used the cyclistic service.
-
-# Process Step
-
-The process step will be to combine all the datasets into one main set and start the cleaning and analysis process. since we are using an R markdown file all cleaning steps will be documented below in R code blocks.
-
-#### Load and stage the data for cleaning
-
-first we load our required libraries for data manipulation and processing
-
-```{r Loading Libraries and Data into the workspace, message=FALSE, warning=FALSE, include=FALSE}
 # load libraries required for processing and analysis 
 
 library(tidyverse) # used for the data wrangling and data manipulation 
@@ -57,8 +7,6 @@ library(janitor) # used for data cleaning
 library(DataExplorer)
 library(lubridate) # used to easily convert data types of date and time formats
 library(skimr)
-
-
 
 # Clean the files environment in the R work space ( best practice to always start fresh)
 
@@ -78,11 +26,11 @@ df5 <- read.csv("202105-divvy-tripdata.csv")
 df6 <- read.csv("202107-divvy-tripdata.csv")
 df7 <- read.csv("202107-divvy-tripdata.csv")
 df8 <- read.csv("202108-divvy-tripdata.csv")
-```
+
 
 #### Examine the data to determine problems
 
-```{r examining each file to explore the data}
+
 # examine each file to ensure consistent col names and investigate the data 
 
 str(df1)
@@ -95,12 +43,6 @@ str(df7)
 str(df8)
 
 
-
-
-```
-
-```{r Prepare for processing, echo=FALSE}
-
 # checking columns names to ensure the ability to combine without issues
 colnames(df1)
 colnames(df2)
@@ -111,11 +53,10 @@ colnames(df6)
 colnames(df7)
 colnames(df8)
 
-```
 
-Looking at the Structure of each dataset we can see that they can be easily combined into one master file for easier cleanup and exploring
+#Looking at the Structure of each dataset we can see that they can be easily combined into one master file for easier cleanup and exploring
 
-```{r combine all the dataframes into one for cleanup prior to any analysis  }
+
 # Create one Variable Data frame with all the df's combined with rbind function (this requires the data frame structure to be matching)
 
 bike_rides_2021 <- rbind(df1,df2,df3,df4,df5,df6,df7,df8)
@@ -124,17 +65,17 @@ bike_rides_2021 <- rbind(df1,df2,df3,df4,df5,df6,df7,df8)
 
 skim_without_charts(bike_rides_2021)
 
-```
 
-As we can see from the data skim function , there is some cleaning needed :
 
--   Some missing values in the end_lat and end_long data , start_station_name , end_station_name)
+#As we can see from the data skim function , there is some cleaning needed :
+  
+  #-   Some missing values in the end_lat and end_long data , start_station_name , end_station_name)
 
--   data types need to be fixed ( dates : started_at , ended_at )
+  #-   data types need to be fixed ( dates : started_at , ended_at )
 
 #### Cleaning the Data
 
-```{r Clean up the data and transform it for analysis}
+
 
 # drop na and null values from the Dataset 
 
@@ -155,21 +96,16 @@ bike_rides_2021$day_of_week <- lubridate::wday(bike_rides_2021$started_at , labe
 #clean the ride_length to remove negative values 
 bike_rides_2021 <- bike_rides_2021 %>%  filter(bike_rides_2021$ride_length > 0 )
 
-```
 
-```{r Check after cleaning   }
 
 # View a Summary of the data after cleaning to check 
 
 skim_without_charts(bike_rides_2021)
-```
+
 
 # Analyze Step
 
 In this step we will work to perform some calculations on grouped data as well as some basic trend and relationship insights
-
-```{r Format data types for calculations and conduct descriptive analysis }
-
 
 # create ride length variable by converting original from factor to numeric 
 
@@ -180,7 +116,7 @@ bike_rides_2021$ride_length_num <- as.numeric(bike_rides_2021$ride_length)
 mean_rides <- aggregate(bike_rides_2021$ride_length_num ~ bike_rides_2021$member_casual , FUN = mean)
 
 max_rides <- aggregate(bike_rides_2021$ride_length_num ~ bike_rides_2021$member_casual , FUN = max)
-  
+
 mean_rides_day_of_week <- aggregate(bike_rides_2021$ride_length_num ~ bike_rides_2021$member_casual + bike_rides_2021$day_of_week , FUN = mean)
 
 #aggregate the data based on the station location 
@@ -191,17 +127,13 @@ loc_rides_start <- aggregate(bike_rides_2021$ride_length ~ bike_rides_2021$start
 
 write_csv(loc_rides_start , file= "~/Bike_data_location_based.csv" )
 
-
-```
-
 ## Visualize and gain more insight
 
-```{r Visualize and Share the insights }
+
 # Start to visualize the data 
 
 #loading the ggplot for creating charts 
 library(ggplot2)
-library(gridExtra)
 
 # create a col plot to show the avg time per user type using the service 
 bike_rides_2021 %>% group_by(member_casual) %>% summarise(avg = mean(ride_length)) %>%
@@ -227,22 +159,24 @@ histogram <- bike_rides_2021 %>% filter(ride_length<3600)  %>%
   labs(title = "HistoGram of  Ride Times for the User Groups"  , x = "Ride Time (length)" , y = "Density" , fill = "User Type")
 
 grid.arrange(density , histogram , ncol =2 )
-```
 
-### Analysis and Observations :
+### Analysis and Observations : 
 
--   Casual users have a higher avg of ride length service members
--   The density plot shows that most riders for both members and casual riders usually use the service for less than 10 mins on average
--   The members seem to be utilizing the service consistently through out the week while the casual users utilize it more on the weekends
+# - Casual users have a higher avg of ride length service members 
+# - The density plot shows that most riders for both members and casual riders usually use the service for less than 10 mins on avarage 
+# - The members seem to be utilizing the service consistently through out the week while the casual users utilize it more on the weekends 
+
 
 # ACT and Recommendation Step
 
-based on the observations from the data we can conclude the following:
-
--   The marketing campaign should focus on the list of members with the 5 - 10 mins ride times and further deep dive into their habits
--   perhaps some promotions for extending the their rides to have more time using the service
--   Weekend centric promotions or service discounts for during week non members
-
-further deeper analysis should be done to understand the location and route behavior the user take , that can lead to more thoughtful insights on the station placement.
-
-further plots and more extended analysis will be provided at [Cyclistic bike-share analysis in Tableau](https://public.tableau.com/app/profile/jihad.al.hussain/viz/Cyclisticbike-shareanalysis_16413688581510/Dashboard1 "Click to view some other plots on the Tableau Website")
+# based on the observations from the data we can conclude the following:
+#   
+#   The marketing campaign should focus on the list of members with the 5 - 10 mins ride times and further deep dive into their habits
+# 
+# perhaps some promotions for extending the their rides to have more time using the service
+# 
+# Weekend centric promotions or service discounts for during week non members
+# 
+# further deeper analysis should be done to understand the location and route behavior the user take , that can lead to more thoughtful insights on the station placement.
+# 
+# further plots and more extended analysis will be provided at Cyclistic bike-share analysis in Tableau ( https://public.tableau.com/app/profile/jihad.al.hussain/viz/Cyclisticbike-shareanalysis_16413688581510/Dashboard1)
