@@ -1,37 +1,9 @@
-## Welcome to GitHub Pages
+# Cyclistic Data Analysis Project
 
-You can use the [editor on GitHub](https://github.com/JQH84/Cyclistic/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+This project will attempt to analyze the 2021 cyclistic dataset to understand the main diffrence in consumer nehaviour between the members and casual users of the bike riding service. 
+R , Excel and SQL will be the main software utilized for this analysis. 
+A detialed R Markdown file will be provided to help visualize all the data processing , cleaning and visulizing. 
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+a final report summary including an HTML render of the R Markdown file are provided and for who want to run the script for analysis can use the .R file.
 
-### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [Basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/JQH84/Cyclistic/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+[Tableau Link ](https://public.tableau.com/app/profile/jihad.al.hussain/viz/Cyclisticbike-shareanalysis_16413688581510/Dashboard1) - More advanced Plots to visulize the data further 
