@@ -6,4 +6,8 @@ A detailed R Markdown file will be provided to help visualize all the data proce
 
 a final report summary including an HTML render of the R Markdown file are provided and for who want to run the script for analysis can use the .R file.
 
+Resource Links : 
+
+[GitHub Repo](https://github.com/JQH84/Cyclistic) 
+
 [Tableau Link ](https://public.tableau.com/app/profile/jihad.al.hussain/viz/Cyclisticbike-shareanalysis_16413688581510/Dashboard1) - More advanced Plots to visulize the data further 
